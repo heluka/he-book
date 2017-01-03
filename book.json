@@ -14,6 +14,7 @@
         "mathjax",
         "theme-latex",
         "mathjax-inline",
+        "-highlight",
         "prism",
         "prism-themes",
         "ace",
@@ -36,6 +37,11 @@
             "theme": "sepia",
             "family": "sans",
             "size": 3
+        },
+        "prism": {
+            "css": [    
+              "prismjs/themes/prism-solarizedlight.css"
+            ]
         }
     },
     "output": null,
