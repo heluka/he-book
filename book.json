@@ -61,11 +61,5 @@
     },
     "title": "linux底层基础学习笔记",
     "language": "zh-hans",
-    "links": {
-        "sidebar": {
-            "Home": "http://添加左侧导航栏链接.com"
-        },
-        "gitbook": true
-    },
     "description": "用来记录关于linux汇编语言编程、ELF文件结构、动态链接、共享库等方面内容的学习笔记"
 }
