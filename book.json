@@ -47,6 +47,10 @@
             "size": "large"
         }
     },
+    "structure": {
+        "readme": "README.md",
+        "summary": "SUMMARY.md"
+    },
     "author": "heluka",
     "pdf": {
         "headerTemplate": null,
