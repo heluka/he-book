@@ -1,4 +1,27 @@
 {
+    "title": "linux底层基础学习笔记",
+    "author": "heluka",
+    "description": "用来记录关于linux汇编语言编程、ELF文件结构、动态链接、共享库等方面内容的学习笔记",
+    "language" : "zh-hans",
+    "links": {
+        "sidebar": {
+            "Home": "http://添加左侧导航栏链接.com"
+        },
+        "gitbook": true
+    },
+    "structure": {            
+        "readme": "README.md",
+        "summary": "SUMMARY.md",
+        "glossary": "GLOSSARY.md",
+        "languages": "LANGS.md"
+    },
+    "styles": 
+        "website": "styles/website.css",           
+        "ebook": "styles/ebook.css",
+        "pdf": "styles/pdf.css",
+        "mobi": "styles/mobi.css",
+        "epub": "styles/epub.css"
+    },
     "plugins": [
         "latex-codecogs",
         "mathjax",
@@ -29,4 +52,19 @@
             "size": 3
         }
     }
+    "output": null,
+    "pdf": {
+        "fontSize": 12,
+        "footerTemplate": null,
+        "headerTemplate": null,
+        "margin": {
+            "bottom": 36,
+            "left": 62,
+            "right": 62,
+            "top": 36
+        },
+        "pageNumbers": false,
+        "paperSize": "a4"
+    },
+    "variables": {}
 }
