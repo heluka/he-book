@@ -24,15 +24,17 @@
     "output": null,
     "pluginsConfig": {
         "fontsettings": {
-            "theme": "sepia",
+            "theme": "white",
             "family": "sans",
             "size": 4
         },
         "github": {
-          "url": "https://github.com/heluka/he-book"
+            "url": "https://github.com/heluka/he-book"
         },
         "prism": {
-            "css": ["prismjs/themes/prism-solarizedlight.css"]
+            "css": [
+                "prismjs/themes/prism-solarizedlight.css"
+            ]
         },
         "github-buttons": {
             "repo": "heluka/he-book",
@@ -42,10 +44,6 @@
             ],
             "size": "large"
         }
-    },
-    "structure": {
-        "readme": "README.md",
-        "summary": "SUMMARY.md"
     },
     "author": "heluka",
     "pdf": {
