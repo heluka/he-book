@@ -51,13 +51,13 @@ ctest1.c
 
 void ctest1(int *i)
 {
-	*i = 50;
+    *i = 50;
 
-	printf("output from ctest1 \n");
+    printf("output from ctest1 \n");
 
-	while(1) {
-	    sleep(1000);
-	}
+    while(1) {
+        sleep(1000);
+    }
 }
 ```
 
@@ -66,7 +66,7 @@ ctest2.c
 ```c
 void ctest2(int *j)
 {
-	*j = 100;
+    *j = 100;
 }
 ```
 
@@ -87,14 +87,14 @@ void ctest2(int *j);
 
 int main(int argc, char const *argv[])
 {
-	int x,y,z;
+    int x,y,z;
 
-	ctest1(&x);
-	ctest2(&y);
+    ctest1(&x);
+    ctest2(&y);
 
-	z = (x/y);
-	printf("%d / %d = %d \n",x,y,z );
-	return 0;
+    z = (x/y);
+    printf("%d / %d = %d \n",x,y,z );
+    return 0;
 }
 ```
 
@@ -124,20 +124,20 @@ ctest1.o:     file format elf32-i386
 Disassembly of section .text:
 
 00000000 <ctest1>:
-   0:	55                   	push   %ebp
-   1:	89 e5                	mov    %esp,%ebp
-   3:	83 ec 08             	sub    $0x8,%esp
-   6:	8b 45 08             	mov    0x8(%ebp),%eax
-   9:	c7 00 32 00 00 00    	movl   $0x32,(%eax)
-   f:	83 ec 0c             	sub    $0xc,%esp
-  12:	68 00 00 00 00       	push   $0x0
-  17:	e8 fc ff ff ff       	call   18 <ctest1+0x18>
-  1c:	83 c4 10             	add    $0x10,%esp
-  1f:	83 ec 0c             	sub    $0xc,%esp
-  22:	68 e8 03 00 00       	push   $0x3e8
-  27:	e8 fc ff ff ff       	call   28 <ctest1+0x28>
-  2c:	83 c4 10             	add    $0x10,%esp
-  2f:	eb ee                	jmp    1f <ctest1+0x1f>
+   0:    55                       push   %ebp
+   1:    89 e5                    mov    %esp,%ebp
+   3:    83 ec 08                 sub    $0x8,%esp
+   6:    8b 45 08                 mov    0x8(%ebp),%eax
+   9:    c7 00 32 00 00 00        movl   $0x32,(%eax)
+   f:    83 ec 0c                 sub    $0xc,%esp
+  12:    68 00 00 00 00           push   $0x0
+  17:    e8 fc ff ff ff           call   18 <ctest1+0x18>
+  1c:    83 c4 10                 add    $0x10,%esp
+  1f:    83 ec 0c                 sub    $0xc,%esp
+  22:    68 e8 03 00 00           push   $0x3e8
+  27:    e8 fc ff ff ff           call   28 <ctest1+0x28>
+  2c:    83 c4 10                 add    $0x10,%esp
+  2f:    eb ee                    jmp    1f <ctest1+0x1f>
 
 ctest2.o:     file format elf32-i386
 
@@ -145,25 +145,143 @@ ctest2.o:     file format elf32-i386
 Disassembly of section .text:
 
 00000000 <ctest2>:
-   0:	55                   	push   %ebp
-   1:	89 e5                	mov    %esp,%ebp
-   3:	8b 45 08             	mov    0x8(%ebp),%eax
-   6:	c7 00 64 00 00 00    	movl   $0x64,(%eax)
-   c:	90                   	nop
-   d:	5d                   	pop    %ebp
-   e:	c3                   	ret    
-
+   0:    55                       push   %ebp
+   1:    89 e5                    mov    %esp,%ebp
+   3:    8b 45 08                 mov    0x8(%ebp),%eax
+   6:    c7 00 64 00 00 00        movl   $0x64,(%eax)
+   c:    90                       nop
+   d:    5d                       pop    %ebp
+   e:    c3                       ret
 ```
 
 这个静态库没有源代码，自然用-S开关也没有源代码一一对照输出。但是仅就汇编代码就能看出：libctest.a就是将两个目标文件的.text段捏合到一起。关于其中详细分析，在后面专门讲。
 
-4. 创建动态库
+### 4.创建动态库
 
+动态库与静态库的区别就不讲了，什么只在内存中加载一份，其他所有使用该动态库的代码都共享这一份，这种理论上的东西有实际的验证之后才能更加有底气，之后专门讲是怎么实现，以及使用动态库的代码在编译层次会有什么不同等等，这里只讲在编程上有何种不同：就是编译命令不同：
 
+```
+$gcc -Wall -fPIC -c ctest1.c ctest2.c
+$gcc -shared -Wl,-soname,libctest.so.1 -o libctest.so.1.0 ctest1.o ctest2.o
+$ln -sf libctest.so.1.0 libctest.so
+$ln -sf libctest.so.1.0 libctest.so.1
+$gcc -Wall -L. cprog.c -lctest -o cprog
+$export LD_LIBRARY_PATH=.
+$./cprog
+```
 
+其中 ，-fPIC是告诉gcc只生成“地址无关代码”（position-independent code），即程序代码中没有对绝对地址的引用，所有对数据值的访问都通过相对地址进行，这样的话，共享库加载地址就不必固定了。当然好处不只这么点，后面会结合实现细节来讲，更有说服力。-Wl, -soname, libctest.so.1是声明该共享库的soname，后面再分别创建两个符号链接，分别由ld和ld-linux.so使用。
 
+最后在执行前，需要将当前目录临时作为共享库目录之一。
 
+为了将编译指令的成果固化下来，特地写了Makefile：
 
+```
+OBJECTS = ctest1.o ctest2.o
+
+#ctest shared library's full name
+CTEST_LIB = libctest.so.1.0
+#used for dynamic loader
+CTEST_LIB_SONAME = libctest.so.1
+#used for GNU linker
+CTEST_LIB_SONAME_PART = libctest.so
+
+LINUX_LIBCT = -lctest
+
+CC = gcc
+CFLAGS = -std=c99 \
+		-g \
+		-Wall
+DSOFLAGS = -shared \
+		   -Wl,-soname,$(CTEST_LIB_SONAME)
+
+cprog : cprog.c $(CTEST_LIB)
+	$(CC) -L. cprog.c $(CFLAGS) $(LINUX_LIBCT) -o $@
+
+$(CTEST_LIB) : $(OBJECTS)
+	$(CC) $(DSOFLAGS) -o $@ $(OBJECTS)
+	ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME)
+	ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME_PART)
+
+$(OBJECTS): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+.PHONY : clean
+clean :
+	rm -f cprog $(OBJECTS) $(CTEST_LIB) $(CTEST_LIB_SONAME) $(CTEST_LIB_SONAME_PART)
+```
+
+### 5.手工动态访问共享库函数
+
+还可以通过[POSIX](http://en.wikipedia.org/wiki/POSIX)\("Portable Operating System Interface for Unix"\)接口中的函数（dlopen, dlsym, dlclose, dlerror），来直接访问共享库的函数，这样子耦合最低，虽然是麻烦了一点。
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <dlfcn.h>
+#include "ctest.h"
+
+int main(){
+    void *handle;
+    char *error;
+    int x, y, z;
+
+    handle = dlopen ("libctest.so.1", RTLD_LAZY);
+    if (!handle) {
+        fputs (dlerror(), stderr);
+        exit(1);
+    }
+
+    ctest1 = dlsym(handle, "ctest1");
+    if (( error = dlerror() ) != NULL)  {
+        fputs(error, stderr);
+        exit(1);
+    }
+
+    ctest2 = dlsym(handle, "ctest2");
+    if (( error = dlerror() ) != NULL)  {
+        fputs(error, stderr);
+        exit(1);
+    }
+
+    ctest1(&x);
+    ctest2(&y);
+    z = (x / y);
+    printf("%d / %d = %d\n", x, y, z);
+    dlclose(handle);
+    return 0;
+}
+```
+
+访问模式一般是先用dlopen来获得共享库的句柄（其实就是内存地址），而后以该句柄和相应函数名为参数，用dlsym来得到相应函数的地址，就可以直接调用访问了。
+
+但是，为防止在c++程序中著名的[name mangling](http://en.wikipedia.org/wiki/Name_mangling)问题，需要在头文件ctest.h中加上extern "C"编译指令：
+
+```c
+#ifndef CTEST_H
+#define CTEST_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void (*ctest1)(int *);
+void (*ctest2)(int *);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+```
+
+这样的话，编译就需要链接linux的动态加载器ld-linux.so了：
+
+```
+$gcc -Wall -L. cprog.c -ldl -o cprog
+```
+
+当然，共享库libctest.so.1.0的生成编译指令并没有变化 。
 
 
 
