@@ -9,19 +9,6 @@
         },
         "gitbook": true
     },
-    "structure": {            
-        "readme": "README.md",
-        "summary": "SUMMARY.md",
-        "glossary": "GLOSSARY.md",
-        "languages": "LANGS.md"
-    },
-    "styles": 
-        "website": "styles/website.css",           
-        "ebook": "styles/ebook.css",
-        "pdf": "styles/pdf.css",
-        "mobi": "styles/mobi.css",
-        "epub": "styles/epub.css"
-    },
     "plugins": [
         "latex-codecogs",
         "mathjax",
