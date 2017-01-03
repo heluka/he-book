@@ -26,7 +26,7 @@
 > > >
 > > > * 文件/etc/ld.so.conf中所规定的路径，ldconfig会依托该文件，生成/etc/ld.so.cache，系统加载器会到这个缓存中去查找库文件。每次修改/etc/ld.so.conf都需要运行ldconfig来更新该缓存。
 > > >
-> > > 系统目录/lib和/usr/lib中。
+> > > * 系统目录/lib和/usr/lib中。
 
 * 动态链接依赖关系分析器ldd：能够列出可执行文件或共享库所依赖的各个库文件，这个工具在出现诸如“unrefereced symbols...”之类的链接错误时特别有用。
 
