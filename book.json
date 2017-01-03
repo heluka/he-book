@@ -26,15 +26,13 @@
         "fontsettings": {
             "theme": "sepia",
             "family": "sans",
-            "size": 3
+            "size": 4
         },
         "github": {
           "url": "https://github.com/heluka/he-book"
         },
         "prism": {
-            "css": [
-                "prismjs/themes/prism-solarizedlight.css"
-            ]
+            "css": ["prismjs/themes/prism-solarizedlight.css"]
         },
         "github-buttons": {
             "repo": "heluka/he-book",
