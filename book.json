@@ -1,14 +1,4 @@
 {
-    "title": "linux底层基础学习笔记",
-    "author": "heluka",
-    "description": "用来记录关于linux汇编语言编程、ELF文件结构、动态链接、共享库等方面内容的学习笔记",
-    "language" : "zh-hans",
-    "links": {
-        "sidebar": {
-            "Home": "http://添加左侧导航栏链接.com"
-        },
-        "gitbook": true
-    },
     "plugins": [
         "latex-codecogs",
         "mathjax",
@@ -30,8 +20,10 @@
         "atoc",
         "image-captions",
         "image-wrapper",
-        "simple-page-toc"
+        "simple-page-toc",
+        "toggle-chapters"
     ],
+    "output": null,
     "pluginsConfig": {
         "fontsettings": {
             "theme": "sepia",
@@ -39,32 +31,36 @@
             "size": 3
         },
         "prism": {
-            "css": [    
-              "prismjs/themes/prism-solarizedlight.css"
+            "css": [
+                "prismjs/themes/prism-solarizedlight.css"
             ]
         },
         "github-buttons": {
-          "repo": "heluka/he-book",
-          "types": [
-            "star",
-            "watch"
-          ],
-          "size": "large"
+            "repo": "heluka/he-book",
+            "types": [
+                "star",
+                "watch"
+            ],
+            "size": "large"
         }
     },
-    "output": null,
+    "author": "heluka",
     "pdf": {
-        "fontSize": 12,
-        "footerTemplate": null,
         "headerTemplate": null,
         "margin": {
-            "bottom": 36,
-            "left": 62,
-            "right": 62,
-            "top": 36
+            "top": 36,
+            "bottom": 36
         },
-        "pageNumbers": false,
-        "paperSize": "a4"
+        "footerTemplate": null,
+        "pageNumbers": false
     },
-    "variables": {}
+    "title": "linux底层基础学习笔记",
+    "language": "zh-hans",
+    "links": {
+        "sidebar": {
+            "Home": "http://添加左侧导航栏链接.com"
+        },
+        "gitbook": true
+    },
+    "description": "用来记录关于linux汇编语言编程、ELF文件结构、动态链接、共享库等方面内容的学习笔记"
 }
