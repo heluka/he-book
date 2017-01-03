@@ -1,9 +1,7 @@
 {
     "plugins": [
         "latex-codecogs",
-        "mathjax",
         "theme-latex",
-        "mathjax-inline",
         "-highlight",
         "prism",
         "prism-themes",
