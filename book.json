@@ -2,9 +2,9 @@
     "plugins": [
         "latex-codecogs",
         "theme-latex",
-        "-highlight",
         "prism",
         "prism-themes",
+        "-highlight",
         "ace",
         "include-codeblock",
         "include-highlight",
