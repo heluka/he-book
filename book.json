@@ -42,6 +42,14 @@
             "css": [    
               "prismjs/themes/prism-solarizedlight.css"
             ]
+        },
+        "github-buttons": {
+          "repo": "heluka/he-book",
+          "types": [
+            "star",
+            "watch"
+          ],
+          "size": "large"
         }
     },
     "output": null,
