@@ -158,7 +158,7 @@ Disassembly of section .text:
 
 ### 4.创建动态库
 
-动态库与静态库的区别就不讲了，什么只在内存中加载一份，其他所有使用该动态库的代码都共享这一份，这种理论上的东西有实际的验证之后才能更加有底气，之后专门讲是怎么实现，以及使用动态库的代码在编译层次会有什么不同等等，这里只讲在编程上有何种不同：就是编译命令不同：
+动态库与静态库的区别就不讲了，什么只在内存中加载一份，其他所有使用该动态库的代码都共享这一份，这种理论上的东西有实际的验证之后才能更加有底气，之后专门讲是怎么实现，以及使用动态库的代码在编译层次会有什么不同等等，这里只讲在编程上有何种不同：**就是编译命令不同**：
 
 ```
 $gcc -Wall -fPIC -c ctest1.c ctest2.c
@@ -170,7 +170,7 @@ $export LD_LIBRARY_PATH=.
 $./cprog
 ```
 
-其中 ，-fPIC是告诉gcc只生成“地址无关代码”（position-independent code），即程序代码中没有对绝对地址的引用，所有对数据值的访问都通过相对地址进行，这样的话，共享库加载地址就不必固定了。当然好处不只这么点，后面会结合实现细节来讲，更有说服力。-Wl, -soname, libctest.so.1是声明该共享库的soname，后面再分别创建两个符号链接，分别由ld和ld-linux.so使用。
+其中 ，-fPIC是告诉gcc只生成“_地址无关代码_”（position-independent code），即程序代码中没有对绝对地址的引用，所有对数据值的访问都通过相对地址进行，这样的话，共享库加载地址就不必固定了。当然好处不只这么点，后面会结合实现细节来讲，更有说服力。-Wl, -soname, libctest.so.1是声明该共享库的soname，后面再分别创建两个符号链接，分别由ld和ld-linux.so使用。
 
 最后在执行前，需要将当前目录临时作为共享库目录之一。
 
@@ -190,25 +190,25 @@ LINUX_LIBCT = -lctest
 
 CC = gcc
 CFLAGS = -std=c99 \
-		-g \
-		-Wall
+        -g \
+        -Wall
 DSOFLAGS = -shared \
-		   -Wl,-soname,$(CTEST_LIB_SONAME)
+           -Wl,-soname,$(CTEST_LIB_SONAME)
 
 cprog : cprog.c $(CTEST_LIB)
-	$(CC) -L. cprog.c $(CFLAGS) $(LINUX_LIBCT) -o $@
+    $(CC) -L. cprog.c $(CFLAGS) $(LINUX_LIBCT) -o $@
 
 $(CTEST_LIB) : $(OBJECTS)
-	$(CC) $(DSOFLAGS) -o $@ $(OBJECTS)
-	ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME)
-	ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME_PART)
+    $(CC) $(DSOFLAGS) -o $@ $(OBJECTS)
+    ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME)
+    ln -sf $(CTEST_LIB) $(CTEST_LIB_SONAME_PART)
 
 $(OBJECTS): %.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+    $(CC) -c $(CFLAGS) $< -o $@
 
 .PHONY : clean
 clean :
-	rm -f cprog $(OBJECTS) $(CTEST_LIB) $(CTEST_LIB_SONAME) $(CTEST_LIB_SONAME_PART)
+    rm -f cprog $(OBJECTS) $(CTEST_LIB) $(CTEST_LIB_SONAME) $(CTEST_LIB_SONAME_PART)
 ```
 
 ### 5.手工动态访问共享库函数
@@ -282,8 +282,4 @@ $gcc -Wall -L. cprog.c -ldl -o cprog
 ```
 
 当然，共享库libctest.so.1.0的生成编译指令并没有变化 。
-
-
-
-
 
