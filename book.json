@@ -1,3 +1,32 @@
 {
-
+    "plugins": [
+        "latex-codecogs",
+        "mathjax",
+        "theme-latex",
+        "mathjax-inline",
+        "-highlight",
+        "prism",
+        "prism-themes",
+        "ace",
+        "include-codeblock",
+        "include-highlight",
+        "sectionx",
+        "github-buttons",
+        "anchor-navigation",
+        "anchor-navigation-ex",
+        "anchors",
+        "anchors-wrapper",
+        "expandable-chapters",
+        "atoc",
+        "image-captions",
+        "image-wrapper",
+        "simple-page-toc"
+    ],
+    "pluginsConfig": {
+        "fontsettings": {
+            "theme": "sepia",
+            "family": "sans",
+            "size": 3
+        }
+    }
 }
