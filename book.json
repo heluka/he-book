@@ -30,6 +30,9 @@
             "family": "sans",
             "size": 3
         },
+        "github": {
+          "url": "https://github.com/heluka/he-book"
+        },
         "prism": {
             "css": [
                 "prismjs/themes/prism-solarizedlight.css"
