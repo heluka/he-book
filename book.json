@@ -8,7 +8,7 @@
         "ace",
         "include-codeblock",
         "include-highlight",
-        "sectionx",
+        "-sectionx",
         "github-buttons",
         "anchor-navigation",
         "anchor-navigation-ex",
