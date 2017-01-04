@@ -1,6 +1,40 @@
 第一个手工汇编程序：
 
-![](file:///tmp/WizNote/c2b60eeb-d8fa-42fd-b136-ccb0d6601688/index_files/adf96ad9-125c-4db5-8a4e-645b2f88908a.png)
+```
+#PURPOSE:  Simple program that exits and returns a
+#          status code back to the Linux kernel
+
+#INPUT:    none
+
+#OUTPUT:   returns a status code. This can be viewed
+#          by typing
+#
+#          echo $?
+#
+#          after running the program
+
+#VARIABLES:
+#          %eax holds the system call number
+#          %ebx holds the return status
+
+.section .data
+
+.section .text
+.globl _start
+_start:
+movl $1, %eax   # this is the linux kernel command
+                # number (system call) for exiting
+                # a program
+
+movl $3, %ebx   # this is the status number we will
+                # return to the operating system.
+                # Change this around and it will
+                # return different things to
+                # echo $?
+
+int $0x80       # this wakes up the kernel to run
+                # the exit command
+```
 
 其中用.section命令（这种前面有.的命令称为“伪指令”，assembler directives orpseudo-operations，这种指令不会被翻译为机器代码）来明确汇编程序的“段”，.section .data后面是空的，说明目前数据段是空的
 
