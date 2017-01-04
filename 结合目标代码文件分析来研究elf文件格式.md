@@ -62,6 +62,27 @@ ELF文件格式很复杂，但就整体而言，主要是由各种不同的“�
 
 除却通常情况下的ELF基本属性描述功能之外（版本、目标机器型号、程序入口地址等），“ELF头”最重要的作用在于指出“ELF段表”（section header table）的位置，这个“段表”描述了ELF文件中所有段的信息，包括段名、段长、在可执行文件中的偏移量、读写属性等。还有一点要特别提醒注意：“ELF头”是ELF可执行文件格式中唯一一个位置固定的描述性数据结构，即从ELF文件0偏移量开始（从文件头开始）。
 
+“ELF头”详细的结构体定义在/usr/include/elf.h中：
+
+```
+typedef struct
+{
+  unsigned char e_ident[EI_NIDENT]; 
+  Elf32_Half    e_type;         
+  Elf32_Half    e_machine;      
+  Elf32_Word    e_version;      
+  Elf32_Addr    e_entry;        
+  Elf32_Off     e_phoff;        
+  Elf32_Off     e_shoff;        
+  Elf32_Word    e_flags;        
+  Elf32_Half    e_ehsize;       
+  Elf32_Half    e_phentsize;    
+  Elf32_Half    e_phnum;        
+  Elf32_Half    e_shentsize;    
+  Elf32_Half    e_shnum;        
+  Elf32_Half    e_shstrndx;     
+} Elf32_Ehdr; 
+```
 ####程序入口地址各不相同
 
 首先用readelf工具来观察一下ELF文件头：
@@ -89,6 +110,90 @@ ELF Header:
   Number of section headers:         36
   Section header string table index: 33
 ```
-其中程序入口地址（entry point address）是可执行程序加载到进程虚拟内存空间后指令开始执行的地址（第一条指令由此处开始）。这个地址只有对可执行文件（type为exec）才有效，对于可重定位文件（.o）而言，由于其还未链接，其内部许多变量地址和函数入口地址还不明确，是没有程序入口地址的；而对于共享库文件（.so）而言，虽然此项不为0，但也不是真正的
+其中程序入口地址（entry point address），对应结构体中的e_entry数据项，是可执行程序加载到进程虚拟内存空间后指令开始执行的地址，其实就是.text段的地址（第一条指令由此处开始）。这个地址只有对可执行文件（type为exec）才有效，对于可重定位文件（.o）而言，由于其还未链接，其内部许多变量地址和函数入口地址还不明确，是没有程序入口地址的；而对于共享库文件（.so）而言，此项仍然为.text的地址，但是这里用“地址”不准确，应该是.text相对于ELF文件头的偏移量，因为共享库在真正加载前也不知道自己被加载到哪个进程的虚拟内存的什么位置。
+
+查看一个目标文件：
+
+```
+heluka >>> readelf -h ctest1.o | tee sec-out
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          576 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           40 (bytes)
+  Number of section headers:         13
+  Section header string table index: 10
+```
+查看一个共享库文件：
+
+```
+heluka >>> readelf -h libctest.so | tee sec-out
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Shared object file)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Entry point address:               0x430
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          5904 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         7
+  Size of section headers:           40 (bytes)
+  Number of section headers:         28
+  Section header string table index: 25
+```
+查看另外一个可执行程序文件：
+
+```
+heluka >>> readelf -h cprog-ld | tee sec-outELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Intel 80386
+  Version:                           0x1
+  Entry point address:               0x8048580
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          6464 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         9
+  Size of section headers:           40 (bytes)
+  Number of section headers:         31
+  Section header string table index: 28
+```
+####段表在哪里？
+
+好，现在我们来集中精力找到“段表”。在此之前，先提个问题，只有1个段表吗？实际上，仔细观察elf结构体我们不难发现，所有与“段表”相关的数据项都有两份：
+
+|段表偏移量|||
+
+
+
+
 
 
