@@ -202,4 +202,6 @@ heluka >>> readelf -h cprog-ld | tee sec-outELF Header:
 
 还真有两个段表，一个着眼于程序链接时用于组成新的可执行文件或共享库，另一个着眼于程序加载执行时建立内存映像。
 
+![](/assets/two-view.png)
+
 
