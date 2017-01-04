@@ -66,7 +66,6 @@ ELF文件格式很复杂，但就整体而言，主要是由各种不同的“�
 
 首先用readelf工具来观察一下ELF文件头：
 
-
 ```
 heluka >>> readelf -h cprog | tee sec-out 
 ELF Header:
@@ -90,7 +89,6 @@ ELF Header:
   Number of section headers:         36
   Section header string table index: 33
 ```
-
-
+其中程序入口地址（entry point address）是可执行程序加载到进程虚拟内存空间后指令开始执行的地址（第一条指令由此处开始）。这个地址只有对可执行文件（type为exec）才有效，对于可重定位文件（.o）而言，由于其还未链接，其内部许多变量地址和函数入口地址还不明确，是没有程序入口地址的；而对于共享库文件（.so）而言，虽然此项不为0，但也不是真正的
 
 
