@@ -54,7 +54,7 @@ ELF文件格式很复杂，但就整体而言，主要是由各种不同的“�
 
 ### 2.ELF头部的作用是什么？
 
-当我们从命令行或图形界面中启动某个可执行程序A时，最终是由execve系统调用(system call)来接手负责，当前（父）进程的虚拟内存空间最终要由A可执行文件中的内容所代替，这个过程不仅仅用mmap内存映射将文件内容拷贝到虚存中相应位置即可，ELF是由不同内存访问属性的各种不同段组成的结构化文件，系统加载器的第一步就是要得到ELF文件中各个段的信息。
+当我们从命令行或图形界面中启动某个可执行程序A时，最终是由execve系统调用\(system call\)来接手负责，当前（父）进程的虚拟内存空间最终要由A可执行文件中的内容所代替，这个过程不仅仅用mmap内存映射将文件内容拷贝到虚存中相应位置即可，ELF是由不同内存访问属性的各种不同段组成的结构化文件，系统加载器的第一步就是要得到ELF文件中各个段的信息。
 
 ![](/assets/elf-structure.png)
 
@@ -81,9 +81,10 @@ typedef struct
   Elf32_Half    e_shentsize;    
   Elf32_Half    e_shnum;        
   Elf32_Half    e_shstrndx;     
-} Elf32_Ehdr; 
+} Elf32_Ehdr;
 ```
-####程序入口地址各不相同
+
+#### 程序入口地址各不相同
 
 首先用readelf工具来观察一下ELF文件头：
 
@@ -110,7 +111,8 @@ ELF Header:
   Number of section headers:         36
   Section header string table index: 33
 ```
-其中程序入口地址（entry point address），对应结构体中的e_entry数据项，是可执行程序加载到进程虚拟内存空间后指令开始执行的地址，其实就是.text段的地址（第一条指令由此处开始）。这个地址只有对可执行文件（type为exec）才有效，对于可重定位文件（.o）而言，由于其还未链接，其内部许多变量地址和函数入口地址还不明确，是没有程序入口地址的；而对于共享库文件（.so）而言，此项仍然为.text的地址，但是这里用“地址”不准确，应该是.text相对于ELF文件头的偏移量，因为共享库在真正加载前也不知道自己被加载到哪个进程的虚拟内存的什么位置。
+
+其中程序入口地址（entry point address），对应结构体中的e\_entry数据项，是可执行程序加载到进程虚拟内存空间后指令开始执行的地址，其实就是.text段的地址（第一条指令由此处开始）。这个地址只有对可执行文件（type为exec）才有效，对于可重定位文件（.o）而言，由于其还未链接，其内部许多变量地址和函数入口地址还不明确，是没有程序入口地址的；而对于共享库文件（.so）而言，此项仍然为.text的地址，但是这里用“地址”不准确，应该是.text相对于ELF文件头的偏移量，因为共享库在真正加载前也不知道自己被加载到哪个进程的虚拟内存的什么位置。
 
 查看一个目标文件：
 
@@ -137,6 +139,7 @@ ELF Header:
   Number of section headers:         13
   Section header string table index: 10
 ```
+
 查看一个共享库文件：
 
 ```
@@ -162,6 +165,7 @@ ELF Header:
   Number of section headers:         28
   Section header string table index: 25
 ```
+
 查看另外一个可执行程序文件：
 
 ```
@@ -186,14 +190,16 @@ heluka >>> readelf -h cprog-ld | tee sec-outELF Header:
   Number of section headers:         31
   Section header string table index: 28
 ```
-####段表在哪里？
+
+#### 段表在哪里？
 
 好，现在我们来集中精力找到“段表”。在此之前，先提个问题，只有1个段表吗？实际上，仔细观察elf结构体我们不难发现，所有与“段表”相关的数据项都有两份：
 
-|段表偏移量|||
+| 段表偏移量 | 段个数 | 段尺寸 |
+| :--- | :--- | :--- |
+| e\_phoff | e\_phnum | e\_phentsize |
+| e\_shoff | e\_shnum | e\_shentsize |
 
-
-
-
+还真有两个段表，一个着眼于程序链接时用于组成新的可执行文件或共享库，另一个着眼于程序加载执行时建立内存映像。
 
 
